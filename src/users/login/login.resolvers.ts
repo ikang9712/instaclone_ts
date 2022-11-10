@@ -1,10 +1,10 @@
-import client from "../../client"
-import bcrypt from "bcrypt"
-import jwt from "jsonwebtoken"
+import * as bcrypt from "bcrypt"
+import * as jwt from "jsonwebtoken"
+import { Resolvers } from "../../types"
 
-export default {
+const resolvers: Resolvers = {
     Mutation: {
-        login: async(_, {username, password}) => {
+        login: async(_, {username, password}, {client}) => {
             // 1.find user with args.username
             const user = await client.user.findFirst({
                 where: {username}
@@ -27,8 +27,9 @@ export default {
             const token = await jwt.sign({id:user.id, potato: "secreeet"}, process.env.SECRET_KEY);
             return {
                 ok: true,
-                token,
+                token
             }
         }
     }
 }
+export default resolvers;

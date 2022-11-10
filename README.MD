@@ -1,4 +1,4 @@
-# Instaclone
+# Instaclone in Typescript
 
 ## User
 - [x] Create Account

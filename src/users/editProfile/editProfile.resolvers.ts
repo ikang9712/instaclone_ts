@@ -1,21 +1,20 @@
-import client from "../../client"
-import bcrypt from "bcrypt"
-import jwt from "jsonwebtoken"
-import {protectedResolver} from "../users.utils"
+import * as bcrypt from "bcrypt"
+import { Resolvers } from "../../types"
+import { protectedResolver} from "../users.utils"
 
-export default {
+const resolvers: Resolvers = {
     Mutation: {
-        editProfile: protectedResolver(
-            async(
-                _, 
-                {firstName, lastName, username, email, password:newPassword},
-                {loggedInUser}
-                ) => {
-                let uglyPassword = null;
-                if (newPassword){
-                    uglyPassword = await bcrypt.hash(newPassword, 10)
+        editProfile: protectedResolver(async(_, 
+                {firstName, lastName, username, email, password:newPassword}, 
+                {client, loggedInUser}) => {
+                
+                if (newPassword=""){
+                    return {
+                        ok: false,
+                        error: "Please enter valid password for new password."
+                    }
                 }
-    
+                const uglyPassword = await bcrypt.hash(newPassword, 10)
                 const updatedUser = await client.user.update({
                     where: {
                         id: loggedInUser.id,
@@ -43,3 +42,5 @@ export default {
         )
     }
 }
+
+export default resolvers;
