@@ -1,9 +1,10 @@
 import { Resolvers } from "../../types"
 import { protectedResolver} from "../users.utils"
+import client from "../../client"
 const resolvers: Resolvers = {
     Query: {
         seeProfile : protectedResolver(
-            (_, {username}, {client}) => {
+            (_, {username}) => {
                 const user = client.user.findUnique({
                     where: {
                         username, 

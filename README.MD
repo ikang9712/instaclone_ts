@@ -1,12 +1,35 @@
-# Instaclone in Typescript
+# Instaclone
+
+Install packages
+
+```
+yarn install
+```
+
+Run Studio
+
+```
+yarn run studio
+```
+
+Run Dev Server
+
+```
+yarn run dev
+```
 
 ## User
 - [x] Create Account
 - [x] See Profile
 - [x] Login
-- [ ] Edit Profile
-- [ ] Follow User
-- [ ] Change Avatar (Image Upload)
+- [x] Edit Profile
+- [x] Change Avatar (Image Upload)
+- [x] Follow User
+- [x] Unfollow User
+- [x] See Followers with Offset Pagination
+- [x] See Following with Cursor based Pagination
+- [x] Computed Fields
+- [x] Search Users
 
 ## Photos
 - [ ] See Photo

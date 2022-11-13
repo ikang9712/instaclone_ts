@@ -1,20 +1,31 @@
+import {createWriteStream} from "fs"
+import client from "../../client"
 import * as bcrypt from "bcrypt"
-import { Resolvers } from "../../types"
-import { protectedResolver} from "../users.utils"
+import {protectedResolver} from "../users.utils"
 
-const resolvers: Resolvers = {
+export default {
     Mutation: {
-        editProfile: protectedResolver(async(_, 
-                {firstName, lastName, username, email, password:newPassword}, 
-                {client, loggedInUser}) => {
-                
-                if (newPassword=""){
-                    return {
-                        ok: false,
-                        error: "Please enter valid password for new password."
-                    }
+        editProfile: protectedResolver(
+            async(
+                _, 
+                {firstName, lastName, username, email, password:newPassword, bio, avatar},
+                {loggedInUser}
+                ) => {
+                let avatarUrl = null;
+                if (avatar){
+                    const {filename, createReadStream } = await avatar;
+                    const newFileName = `${loggedInUser.id}-${Date.now()}-${filename}`
+                    const readStream = createReadStream()
+                    const writeStream = createWriteStream(process.cwd()+"/uploads/" + newFileName)
+                    readStream.pipe(writeStream)
+                    avatarUrl = `http://localhost:4000/static/${newFileName}`
                 }
-                const uglyPassword = await bcrypt.hash(newPassword, 10)
+                
+                let uglyPassword = null;
+                if (newPassword){
+                    uglyPassword = await bcrypt.hash(newPassword, 10)
+                }
+    
                 const updatedUser = await client.user.update({
                     where: {
                         id: loggedInUser.id,
@@ -25,7 +36,9 @@ const resolvers: Resolvers = {
                         lastName, 
                         username, 
                         email, 
+                        bio,
                         ...(uglyPassword && {password: uglyPassword}), // condition && value (es6 syntax)
+                        ...(avatarUrl && {avatar: avatarUrl})
                     }
                 })
                 if (updatedUser.id){
@@ -42,5 +55,3 @@ const resolvers: Resolvers = {
         )
     }
 }
-
-export default resolvers;
